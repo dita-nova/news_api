@@ -1,0 +1,78 @@
+Flask News Application
+
+This Flask application provides a simple interface to view top headlines and search for news articles based on various criteria like topic, date range, and language. It utilizes the News API to fetch current news from around the world.
+
+Features
+View top headlines from a selected country.
+Search for news articles by topic, date range, sort by criteria, and language.
+Pagination support for search results.
+
+Getting Started
+
+Prerequisites
+Python 3.6 or higher
+pip and virtualenv
+
+Installation
+Clone the repository
+sh
+Copy code
+git clone https://github.com/dita-nova/news_api
+cd yourrepositoryname
+Create and activate a virtual environment
+
+On Windows:
+cmd
+Copy code
+python -m venv venv
+.\venv\Scripts\activate
+
+On Unix or MacOS:
+sh
+Copy code
+python3 -m venv venv
+source venv/bin/activate
+Install the required packages
+sh
+Copy code
+pip install -r requirements.txt
+
+Configuration
+Obtain a free API key from News API.
+Create a .env file in the root directory and add your API key:
+env
+Copy code
+NEWS_API_KEY=your_api_key_here
+Ensure to replace your_api_key_here with your actual News API key.
+
+Running the Application
+With the configuration set, you can start the server using:
+
+sh
+Copy code
+flask run
+Access the web application at http://localhost:5000 in your browser.
+
+Usage
+
+Top Headlines: Navigate to /top-headlines to view the top headlines from a selected country.
+Search News: Use the form on the home page to search for news articles by specifying a topic, date range, and other criteria.
+
+Contributing
+
+Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are greatly appreciated.
+
+Fork the Project
+Create your Feature Branch (git checkout -b feature/AmazingFeature)
+Commit your Changes (git commit -m 'Add some AmazingFeature')
+Push to the Branch (git push origin feature/AmazingFeature)
+Open a Pull Request
+License
+
+Distributed under the MIT License. See LICENSE for more information.
+
+Contact
+
+Dita Nova - dita-nova.com - dita@dita-nova.com
+
+Project Link: 
