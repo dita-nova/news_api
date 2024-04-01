@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+    <title>Top Headlines</title>
+  
+</head>
+
+
+<body>
+    <h1>{% if country_name %}Headlines from {{ country_name }}{% else %}Get Top Headlines{% endif %}</h1>
+    <div style="display: flex; justify-content: flex-start; margin-top: 20px;">
+
+        <a href="/" style="background-color: #d3d3d3; color: #333; padding: 5px 10px; text-decoration: none; border-radius: 5px; font-size: 14px;">Home</a>
+    </div>
+
+    <div class="form-container" style="margin-top: 20px;">
+            <form action="/top-headlines" method="post" style="font-size: 14px;">
+                <select name="country" required style="font-size: 16px;">
+                    <option value="" disabled selected>Select a country</option>
+                    <option value="us">United States</option>
+                    <option value="gb">United Kingdom</option>
+                    <option value="ca">Canada</option>
+                    <option value="au">Australia</option>
+                    <option value="de">Germany</option>
+                    <option value="cz">Czech Republic</option>
+                    <!-- Add more countries as needed -->
+                </select>
+                <button type="submit" style="font-size: 14px;">Get Top Headlines</button>
+            </form>
+    </div>
+        
+    {% for article in articles %}
+    <div class="article">
+        <div class="article-content">
+            <h2><a href="{{ article.url }}" target="_blank">{{ article.title }}</a></h2>
+            <p>Author: {{article.author}} </p>
+            <p>Published Date: {{ article.publishedAt | format_date }}</p>
+            <p>{{ article.description }}</p>
+        </div>
+        {% if article.image %}
+        <div>
+            <img src="{{ article.image }}" alt="{{ article.title }}" class="article-img">
+        </div>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+
+  
+</body>
+</html>

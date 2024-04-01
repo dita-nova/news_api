@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.js"></script>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    
+
+    <title>{{ topic | capitalize }} News</title>
+    <style>
+        body {
+            font-family: Arial, 
+            sans-serif; margin: 20px;  
+            background-color: #f4f4f4;}
+
+        h1 {
+            color:#333;
+            margin-bottom: 30px;
+        }
+
+        .form-container {
+            margin-bottom: 40px;
+            padding: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0,0.1);
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .article { 
+            margin-bottom: 20px; 
+            padding-bottom: 20px; 
+            border-bottom: 1px solid #eee;
+            box-shadow: 0 2px 4px rgba(0,0,0,0,0.1);
+            border-radius: 5px;
+         }
+
+        .article-img { 
+            width: 100%; 
+            max-width: 200px; 
+            height: auto; 
+            margin: 10px 0; 
+        }
+
+        .article-content { margin-bottom: 20px; }
+        .article a { 
+            text-decoration: none; 
+            color: #333; 
+        }
+        .article a:hover { text-decoration: underline; }
+        .article h2, .article p { margin: 0 0 10px 0; }
+        .pagination {
+            text-align: center;
+            martin-top: 20px;
+        }
+        .pagination a, .pagination span {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 0 5px;
+        }
+        .pagination a:hover {
+        background-color: #0056b3;
+        }
+      
+  
+        .back-to-home:hover {
+        background-color: #0056b3;
+        }
+
+        input[type="text"], 
+        input[type="date"], 
+
+        
+        form {margin-bottom: 20px; }
+       
+    </style>
+</head>
+
+
+<body>
+    <h1>Latest {{ topic | capitalize }} News</h1>
+
+    <div style="display: flex; justify-content: flex-start; margin-top: 20px;">
+        <a href="/" style="background-color: #d3d3d3; color: #333; padding: 5px 10px; text-decoration: none; border-radius: 5px; font-size: 14px;">Home</a>
+    </div>
+    <div class="form-container"> 
+        
+        <form action="/search" method="post" style="font-size: 14px;">
+            <input type="text"  required style="font-size: 14px;" name="topic" id="search" placeholder="Enter topic (e.g., technology, sports)" value="{{ topic }}" required>
+            
+            <!-- Retain the "from date" and "to date" values -->
+            <input type="date" name="from_date" id="from_date" placeholder="From date" value="{{ from_date }}">
+            <input type="date" name="to_date" id="to_date" placeholder="To date" value="{{ to_date }}">
+            
+        
+            <select name="sort_by">
+                <option value="publishedAt"  {% if sort_by == 'publishedAt' %}selected{% endif %}>Published At</option>
+                <option value="popularity" {% if sort_by == 'popularity' %}selected{% endif %}>Popularity</option>
+                <option value="relevancy" {% if sort_by == 'relevancy' %}selected{% endif %}>Relevancy</option>
+            </select>
+        
+            <select name="language">
+                <option value="">Select language</option>
+                <!-- Dynamically set the selected option based on the previously chosen language -->
+                <option value="ar" {% if language == 'ar' %}selected{% endif %}>Arabic (ar)</option>
+                <option value="de" {% if language == 'de' %}selected{% endif %}>German (de)</option>
+                <option value="en" {% if language == 'en' %}selected{% endif %}>English (en)</option>
+                <!-- Add similar logic for other options -->
+            </select>            
+        
+            <button type="submit">Get News</button>
+        </form>
+        
+
+    
+
+
+        {% for article in articles %}
+        <div class="article">
+            <div class="article-content">
+                <h2><a href="{{ article.url }}" target="_blank">{{ article.title }}</a></h2>
+                <p>Author: {{ article.author }} </p>
+                <p>Source: {{ article.source }}</p>
+                <p>Published Date: {{ article.publishedAt | format_date }}</p>
+                <p>{{ article.description }}</p>
+            </div>
+            {% if article.image %}
+            <div>
+                <img src="{{ article.image }}" alt="{{ article.title }}" class="article-img">
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+
+
+    <div class="pagination">
+        {% if page > 1 %}
+        <a href="{{ url_for('index', page=page-1, topic=topic, from_date=from_date, to_date=to_date, language=language, sort_by=sort_by) }}">Previous</a>
+        {% endif %}
+    
+        <span>Page {{ page }} of {{ total_pages }}</span>
+    
+        {% if page < total_pages %}
+        <a href="{{ url_for('index', page=page+1, topic=topic, from_date=from_date, to_date=to_date, language=language, sort_by=sort_by) }}">Next</a>
+        {% endif %}
+    </div>
+    
+    <script>
+        $(document).ready(function() {
+            var availableTags = ["Technology", "Business", "Entertainment", "Health", "Science", "Sports", "AI", "Finance"];
+            $("#search").autocomplete({
+                source: availableTags
+            });
+            console.log("Autocomplete initialized");
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+        var today = new Date();
+        var last30Days = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 30);
+
+        // Format dates as YYYY-MM-DD
+        var formattedToday = today.toISOString().split('T')[0];
+        var formatted30DaysAgo = last30Days.toISOString().split('T')[0];
+
+        // Set the min and max attributes for the from_date input
+        document.getElementById('from_date').setAttribute('min', formatted30DaysAgo);
+        document.getElementById('from_date').setAttribute('max', formattedToday);
+
+        // Optionally, restrict the to_date input as well
+        document.getElementById('to_date').setAttribute('min', formatted30DaysAgo);
+        document.getElementById('to_date').setAttribute('max', formattedToday);
+    });
+
+
+        </script>
+
+</body>
+</html>
+
